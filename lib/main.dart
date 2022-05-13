@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dogs/BreedImage.dart';
+
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -8,7 +9,6 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 
 import 'package:dogs/Dog.dart';
-
 
 void main() => runApp(DogsApp());
 
@@ -69,8 +69,6 @@ class BreedsList extends StatelessWidget {
 
     return dogs;
   }
-
-
 
   // Future<List<Dog>> getDogs() async {
   //   const url = 'https://dog.ceo/api/breeds/list/all';
@@ -184,12 +182,29 @@ class BreedsList extends StatelessWidget {
                           fontSize: 15,
                         ),
                       ),
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => BreedImage(breedImageModel: snapshot.data[index],)));
+                      onTap: () {
+                        if (snapshot.data[index].breedComplement == "") {
+
+                          snapshot.data[index].imageUrl = BreedImage.getUrlString(BreedImage.getUrlImageFuture(snapshot.data[index]));
+
+                          // snapshot.data[index].imageUrl = BreedImage.getUrlImageFuture(snapshot.data[index]).then((String result){snapshot.data[index].imageUrl = result;  });
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => BreedImage(
+                                    breedImageModel: snapshot.data[index],
+                                  )));
+                        }else{
+
+                          snapshot.data[index].imageUrl = BreedImage.getUrlString2(BreedImage.getUrlImageFuture2(snapshot.data[index]));
+
+                          // snapshot.data[index].imageUrl = BreedImage.getUrlImageFuture2(snapshot.data[index]).then((String result){snapshot.data[index].imageUrl = result;  });
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => BreedImage(
+                                breedImageModel: snapshot.data[index],
+                              )));
+                        }
                       },
                     );
-                 }
-              );
+                  });
             }
           },
         ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dogs/BreedImage.dart';
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
@@ -496,3 +497,31 @@ Future<Map> fetch() async{
 // }
 
 // print(dogs.length);
+
+// String urlImageApi = "";
+// _getImage() async {
+//   final result = await appInfoApi.getLogoClient();
+//   setState(() {
+//     urlImageApi = result;
+//   });
+// }
+//
+// @override
+// void initState() {
+//   super.initState();
+//   _getImage();
+// }
+//
+//
+//
+//
+//
+// appInfoApi.getLogoClient().then((String result){
+//   setState(() {
+//     urlImageApi = result;
+//   });
+// });
+//
+//
+//
+// then((String result){setState(() {urlImageApi = result;} ); })

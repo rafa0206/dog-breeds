@@ -6,4 +6,8 @@ class Dog {
 
   Dog(this.breed, this.breedComplement, this.imageUrl);
 
+  set imageUrl( String imageUrl){
+    imageUrl = imageUrl;
+  }
+
 }
