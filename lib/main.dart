@@ -12,21 +12,87 @@ import 'package:dogs/Dog.dart';
 
 void main() => runApp(DogsApp());
 
-class DogsApp extends StatelessWidget {
+
+class DogsApp extends StatefulWidget {
+
   const DogsApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        body: BreedsList(),
-      ),
-    );
-  }
+  State<DogsApp> createState() => _DogsAppState();
 }
 
-class BreedsList extends StatelessWidget {
-  // const DogsList({Key? key}) : super(key: key);
+class _DogsAppState extends State<DogsApp> {
+  // String imageUrl = "teste";
+  // callBack(varImageUrl){
+  //   setState(() {
+  //     imageUrl = varImageUrl;
+  //   });
+  // }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        home: Scaffold(
+          appBar: AppBar(
+            title: const Text('Breeds'),
+          ),
+          body: Container(
+            child: FutureBuilder(
+              future: getDogs(),
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                if (snapshot.data == null) {
+                  return Container(child: const Center(child: Text("Loading...")));
+                } else {
+                  return ListView.builder(
+                      itemCount: snapshot.data.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(
+                            snapshot.data[index].breedComplement,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 15,
+                            ),
+                          ),
+                          subtitle: Text(
+                            snapshot.data[index].breed,
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w300,
+                              fontSize: 15,
+                            ),
+                          ),
+                          onTap: () async {
+                          //   onTap: () {
+
+                            if (snapshot.data[index].breedComplement == "") {
+                              snapshot.data[index].imageUrl = await BreedImage.getUrlImageFuture(snapshot.data[index]);
+
+
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => BreedImage(
+                                    breedImageModel: snapshot.data[index],
+                                  )));
+                            }else{
+
+                              snapshot.data[index].imageUrl = await BreedImage.getUrlImageFuture2(snapshot.data[index]);
+
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: (context) => BreedImage(
+                                    breedImageModel: snapshot.data[index],
+                                  )));
+                            }
+
+                          },
+                        );
+                      });
+                }
+              },
+            ),
+          ),
+        )
+    );
+  }
 
   Future<List<Dog>> getDogs() async {
     const url = 'https://dog.ceo/api/breeds/list/all';
@@ -52,7 +118,7 @@ class BreedsList extends StatelessWidget {
       if (values[i].length == 0) {
         String keyTemp = keys[i];
         String valueTemp = "";
-        String imageUrl = "";
+        String imageUrl = "teste";
         Dog dog = new Dog(keyTemp, valueTemp, imageUrl);
         dogs.add(dog);
       } else {
@@ -60,7 +126,7 @@ class BreedsList extends StatelessWidget {
         var valueTemp2 = values[i];
         for (int j = 0; j < valueTemp2.length; j++) {
           String valueTemp3 = valueTemp2[j];
-          String imageUrl = "";
+          String imageUrl = "teste";
           Dog dog = new Dog(keyTemp2, valueTemp3, imageUrl);
           dogs.add(dog);
         }
@@ -70,152 +136,6 @@ class BreedsList extends StatelessWidget {
     return dogs;
   }
 
-  // Future<List<Dog>> getDogs() async {
-  //   const url = 'https://dog.ceo/api/breeds/list/all';
-  //   final response = await http.get(Uri.parse(url));
-  //   final json = jsonDecode(response.body);
-  //   final Map<String, dynamic> message = json['message'];
-  //   final mappedJson = message.map((key, value) {
-  //     final dynamicList = value as List;
-  //     final stringList = dynamicList.map((e) => e as String).toList();
-  //     return MapEntry(key, stringList);
-  //   });
-  //
-  //   List<Dog> dogs = [];
-  //   var keys = mappedJson.entries.map((e) {
-  //     return e.key;
-  //   }).toList();
-  //
-  //
-  //   var values = mappedJson.entries.map((e) {
-  //     return e.value;
-  //   }).toList();
-  //
-  //   for (int i = 0; i < keys.length; i++) {
-  //     if (values[i].length == 0) {
-  //       String keyTemp = keys[i];
-  //       String valueTemp = "";
-  //
-  //
-  //       var url2 = "https://dog.ceo/api/breed/" + keyTemp + "/images/random";
-  //       var response2 = await http.get(Uri.parse(url2));
-  //       var json2 = jsonDecode(response2.body);
-  //       List<String> images = [];
-  //       images = json2['message'];
-  //       // final mappedJson2 = message.map((key, value) {
-  //       //   final dynamicList = value as List;
-  //       //   final stringList = dynamicList.map((e) => e as String).toList();
-  //       //   return MapEntry(key, stringList);
-  //       // });
-  //
-  //       // var chaves2 = mappedJson.entries.map((e) {
-  //       //   return e.key;
-  //       // }).toList();
-  //
-  //       String imageUrl2 = images[0];
-  //
-  //       Dog dog = new Dog(keyTemp, valueTemp, imageUrl2);
-  //       dogs.add(dog);
-  //     } else {
-  //       String keyTemp2 = keys[i];
-  //       var valueTemp2 = values[i];
-  //       for (int j = 0; j < valueTemp2.length; j++) {
-  //         String valueTemp3 = valueTemp2[j];
-  //
-  //
-  //         var url3 = "https://dog.ceo/api/breed/" + keys[i] + "/" + valueTemp2[j] + "/images";
-  //         var response3 = await http.get(Uri.parse(url3));
-  //         var json3 = jsonDecode(response3.body);
-  //         List<String> images2 = [];
-  //         images2 = json3['message'];
-  //         // final mappedJson3 = message.map((key, value) {
-  //         //   final dynamicList = value as List;
-  //         //   final stringList = dynamicList.map((e) => e as String).toList();
-  //         //   return MapEntry(key, stringList);
-  //         // });
-  //
-  //         // var chaves3 = mappedJson.entries.map((e) {
-  //         //   return e.key;
-  //         // }).toList();
-  //
-  //         String imageUrl3 = images2[0];
-  //
-  //         Dog dog = new Dog(keyTemp2, valueTemp3, imageUrl3);
-  //         dogs.add(dog);
-  //       }
-  //     }
-  //   }
-  //
-  //   return dogs;
-  // }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Breeds'),
-      ),
-      body: Container(
-        child: FutureBuilder(
-          future: getDogs(),
-          builder: (BuildContext context, AsyncSnapshot snapshot) {
-            if (snapshot.data == null) {
-              return Container(child: const Center(child: Text("Loading...")));
-            } else {
-              return ListView.builder(
-                  itemCount: snapshot.data.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      title: Text(
-                        snapshot.data[index].breedComplement,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 15,
-                        ),
-                      ),
-                      subtitle: Text(
-                        snapshot.data[index].breed,
-                        style: const TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 15,
-                        ),
-                      ),
-                      onTap: () {
-                        if (snapshot.data[index].breedComplement == "") {
-
-                          snapshot.data[index].imageUrl = BreedImage.getUrlString(BreedImage.getUrlImageFuture(snapshot.data[index]));
-
-                          // snapshot.data[index].imageUrl = BreedImage.getUrlImageFuture(snapshot.data[index]).then((String result){snapshot.data[index].imageUrl = result;  });
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => BreedImage(
-                                    breedImageModel: snapshot.data[index],
-                                  )));
-                        }else{
-
-                          snapshot.data[index].imageUrl = BreedImage.getUrlString2(BreedImage.getUrlImageFuture2(snapshot.data[index]));
-
-                          // snapshot.data[index].imageUrl = BreedImage.getUrlImageFuture2(snapshot.data[index]).then((String result){snapshot.data[index].imageUrl = result;  });
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => BreedImage(
-                                breedImageModel: snapshot.data[index],
-                              )));
-                        }
-                      },
-                    );
-                  });
-            }
-          },
-        ),
-      ),
-    );
-  }
 }
 
-// class ImageBreed extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Container();
-//   }
-// }
+
